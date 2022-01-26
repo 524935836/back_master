@@ -41,12 +41,12 @@ const actions = {
     //     reject(error)
     //   })
     // })
-    const res = await login({ username: username.trim(), password: password })
-    if (res.code === 20000) {
+    try {
+      const res = await login({ username: username.trim(), password: password })
       commit('SET_TOKEN', res.data.token)
       setToken(res.data.token)
-    } else {
-      return Promise.reject(res.message)
+    } catch (err) {
+      return Promise.reject(err)
     }
   },
 
