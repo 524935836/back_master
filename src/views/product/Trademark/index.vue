@@ -19,14 +19,19 @@
       <el-table-column v-slot="{ row }" label="品牌LOGO" width="width">
         <img :src="row.logoUrl" alt="" style="width: 100px; height: 100px" />
       </el-table-column>
-      <el-table-column v-slot=" { row }" label="操作" width="width">
+      <el-table-column v-slot="{ row }" label="操作" width="width">
         <el-button
           type="warning"
           icon="el-icon-edit"
           size="mini"
           @click="showUpdateTradeMark(row)"
         >修改</el-button>
-        <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+        <el-button
+          type="danger"
+          icon="el-icon-delete"
+          size="mini"
+          @click="deleteTradeMark(row)"
+        >删除</el-button>
       </el-table-column>
     </el-table>
     <!-- 分页器 -->
@@ -42,12 +47,16 @@
     >
     </el-pagination>
     <!-- 对话框 -->
-    <el-dialog :title="tmForm.id ? '修改商品' : '添加品牌'" :visible.sync="dialogFormVisible">
-      <el-form style="width:80%">
-        <el-form-item label="品牌名称" label-width="100px">
+    <el-dialog
+      :title="tmForm.id ? '修改商品' : '添加品牌'"
+      :visible.sync="dialogFormVisible"
+      @close="addOrUpdateTradeMarkDialog"
+    >
+      <el-form ref="tradeMark" style="width: 80%" :model="tmForm" :rules="rules">
+        <el-form-item label="品牌名称" label-width="100px" prop="tmName">
           <el-input v-model="tmForm.tmName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="品牌LOGO" label-width="100px">
+        <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
           <!-- Upload 上传 -->
           <el-upload
             class="avatar-uploader"
@@ -74,6 +83,14 @@
 export default {
   name: 'Trademark',
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value.length < 2 || value.length > 10) {
+        callback(new Error('品牌名称2-10位'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       pageNum: 1,
       pageSize: 3,
@@ -83,6 +100,13 @@ export default {
       tmForm: {
         tmName: '',
         logoUrl: ''
+      },
+      rules: {
+        tmName: [
+          { required: true, message: '请输入品牌名称', trigger: 'blur' },
+          { validator: validatePass, trigger: 'change' }
+        ],
+        logoUrl: [{ required: true, message: '请选择品牌的图片' }]
       }
     }
   },
@@ -137,13 +161,49 @@ export default {
       return isJPG && isLt2M
     },
     // 添加或更新品牌
-    async addOrUpdateTradeMark() {
-      this.dialogFormVisible = false
-      const res = await this.$API.tradeMark.reqAddOrUpdateTradeMark(this.tmForm)
-      if (res.code === 200) {
-        this.$message.success(this.tmForm.id ? '修改品牌成功' : '添加商品成功')
-        this.getTradeMarkList()
-      }
+    addOrUpdateTradeMark() {
+      // 表单验证
+      this.$refs.tradeMark.validate(async(valid) => {
+        if (!valid) return this.$message.error('error submit!!')
+        try {
+          await this.$API.tradeMark.reqAddOrUpdateTradeMark(this.tmForm)
+          this.$message.success(this.tmForm.id ? '修改品牌成功' : '添加商品成功')
+          await this.getTradeMarkList(this.tmForm.id ? this.pageNum : 1)
+        } catch (err) {
+          return
+        }
+        this.dialogFormVisible = false
+      })
+    },
+    // 关闭对话框回调
+    addOrUpdateTradeMarkDialog() {
+      this.$refs.tradeMark.resetFields()
+    },
+    // 删除品牌的操作
+    deleteTradeMark(row) {
+      this.$confirm(`你确定删除${row.tmName}`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          try {
+            await this.$API.tradeMark.reqDeleteTradeMark(row.id)
+            this.getTradeMarkList(this.list.length > 1 ? this.pageNum : this.pageNum - 1)
+          } catch (err) {
+            return
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   }
 }
@@ -151,26 +211,26 @@ export default {
 
 <style lang="less">
 .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>
