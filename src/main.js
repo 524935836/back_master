@@ -19,6 +19,9 @@ Vue.prototype.$API = API
 import '@/icons' // icon
 import '@/permission' // permission control
 
+// 全局注册组件
+import CategorySelect from '@/components/CategorySelect'
+Vue.component(CategorySelect.name, CategorySelect)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
