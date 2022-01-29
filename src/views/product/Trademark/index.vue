@@ -168,7 +168,7 @@ export default {
         try {
           await this.$API.tradeMark.reqAddOrUpdateTradeMark(this.tmForm)
           this.$message.success(this.tmForm.id ? '修改品牌成功' : '添加商品成功')
-          await this.getTradeMarkList(this.tmForm.id ? this.pageNum : 1)
+          this.getTradeMarkList(this.tmForm.id ? this.pageNum : 1)
         } catch (err) {
           return
         }
