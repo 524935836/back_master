@@ -9,3 +9,5 @@ export const reqCategory3List = (category2Id) => request(`/admin/product/getCate
 export const reqAttrList = (category1Id, category2Id, category3Id) => request(`/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`)
 
 export const reqAddOrUpdateAttr = (data) => request({ url: '/admin/product/saveAttrInfo', data, method: 'post' })
+
+export const reqDeleteAttr = (attrId) => request({ url: `/admin/product/deleteAttr/${attrId}` })

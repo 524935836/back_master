@@ -3,18 +3,48 @@
     <!-- 行内表单 -->
     <el-form :inline="true" class="demo-form-inline" :model="cForm">
       <el-form-item label="一级分类">
-        <el-select v-model="cForm.category1Id" placeholder="请选择" @change="handle1">
-          <el-option v-for="c1 in list1" :key="c1.id" :label="c1.name" :value="c1.id"></el-option>
+        <el-select
+          v-model="cForm.category1Id"
+          placeholder="请选择"
+          :disabled="show"
+          @change="handle1"
+        >
+          <el-option
+            v-for="c1 in list1"
+            :key="c1.id"
+            :label="c1.name"
+            :value="c1.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="二级分类">
-        <el-select v-model="cForm.category2Id" placeholder="请选择" @change="handle2">
-          <el-option v-for="c2 in list2" :key="c2.id" :label="c2.name" :value="c2.id"></el-option>
+        <el-select
+          v-model="cForm.category2Id"
+          placeholder="请选择"
+          :disabled="show"
+          @change="handle2"
+        >
+          <el-option
+            v-for="c2 in list2"
+            :key="c2.id"
+            :label="c2.name"
+            :value="c2.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="三级分类">
-        <el-select v-model="cForm.category3Id" placeholder="请选择" @change="handle3">
-          <el-option v-for="c3 in list3" :key="c3.id" :label="c3.name" :value="c3.id"></el-option>
+        <el-select
+          v-model="cForm.category3Id"
+          placeholder="请选择"
+          :disabled="show"
+          @change="handle3"
+        >
+          <el-option
+            v-for="c3 in list3"
+            :key="c3.id"
+            :label="c3.name"
+            :value="c3.id"
+          ></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -24,6 +54,9 @@
 <script>
 export default {
   name: 'CategorySelect',
+  props: {
+    show: Boolean
+  },
   data() {
     return {
       list1: [],
@@ -83,6 +116,4 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-
-</style>
+<style lang="less" scoped></style>

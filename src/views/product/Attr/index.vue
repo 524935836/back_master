@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card style="margin: 20px 0">
-      <CategorySelect @getCategoryId="getCategoryId"></CategorySelect>
+      <CategorySelect :show="!isShowTable" @getCategoryId="getCategoryId"></CategorySelect>
     </el-card>
     <el-card>
       <!-- 展示属性 -->
@@ -31,7 +31,7 @@
               size="mini"
               @click="updateAttr(row)"
             ></el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteAttr(row.id)"></el-button>
           </el-table-column>
         </el-table>
       </div>
@@ -131,6 +131,7 @@ export default {
         this.attrList = []
       } else {
         this.category3Id = categoryId
+        this.attrList = []
         // 获取属性列表
         this.getAttrList()
       }
@@ -226,6 +227,16 @@ export default {
         this.getAttrList()
         this.isShowTable = true
         this.$message.success('保存成功')
+      } catch (err) {
+        return
+      }
+    },
+    // 删除属性
+    async deleteAttr(id) {
+      try {
+        await this.$API.attr.reqDeleteAttr(id)
+        this.getAttrList()
+        this.$message.success('删除属性成功')
       } catch (err) {
         return
       }
