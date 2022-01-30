@@ -1,33 +1,58 @@
 <template>
   <div>
-    <el-card>
+    <el-card style="margin: 20px 0px">
       <CategorySelect :show="!show" @getCategoryId="getCategoryId"></CategorySelect>
     </el-card>
     <el-card>
       <div>
         <el-button type="primary" icon="el-icon-plus">添加SPU</el-button>
         <!-- 表格 -->
-        <el-table style="width: 100%" border>
-          <el-table-column type="index" label="序号" width="80"> </el-table-column>
-          <el-table-column prop="prop" label="SPU名称" width="width"> </el-table-column>
-          <el-table-column prop="prop" label="SPU描述" width="width"> </el-table-column>
+        <el-table style="width: 100%" border :data="records">
+          <el-table-column
+            type="index"
+            label="序号"
+            width="80"
+            align="center"
+            :index="indexMethod"
+          ></el-table-column>
+          <el-table-column prop="spuName" label="SPU名称" width="width"> </el-table-column>
+          <el-table-column prop="description" label="SPU描述" width="width"> </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
-            <el-button type="success" icon="el-icon-plus" size="mini"></el-button>
-            <el-button type="warning" icon="el-icon-edit" size="mini"></el-button>
-            <el-button type="info" icon="el-icon-info" size="mini"></el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <hint-button
+              type="success"
+              icon="el-icon-plus"
+              size="mini"
+              title="添加sku"
+            ></hint-button>
+            <hint-button
+              type="warning"
+              icon="el-icon-edit"
+              size="mini"
+              title="修改spu"
+            ></hint-button>
+            <hint-button
+              type="info"
+              icon="el-icon-info"
+              size="mini"
+              title="查看当前spu全部sku列表"
+            ></hint-button>
+            <hint-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              title="删除spu"
+            ></hint-button>
           </el-table-column>
         </el-table>
-        <!-- 分页器 -->
-        <!-- @size-change="handleSizeChange"
-          @current-change="handleCurrentChange" -->
         <el-pagination
           style="text-align: center"
-          :current-page="1"
+          :current-page="pageNum"
           :page-sizes="[3, 5, 10]"
-          :page-size="3"
+          :page-size="pageSize"
           layout="prev, pager, next, jumper, ->, sizes, total"
-          :total="100"
+          :total="total"
+          @current-change="getSpuList"
+          @size-change="handleSizeChange"
         >
         </el-pagination>
       </div>
@@ -43,7 +68,11 @@ export default {
       show: true,
       category1Id: '',
       category2Id: '',
-      category3Id: ''
+      category3Id: '',
+      pageNum: 0,
+      pageSize: 3,
+      total: 0,
+      records: []
     }
   },
   methods: {
@@ -53,30 +82,41 @@ export default {
         this.category1Id = categoryId
         this.category2Id = ''
         this.category3Id = ''
-        this.spuList = []
+        this.records = []
       } else if (level === 2) {
         this.category2Id = categoryId
         this.category3Id = ''
-        this.spuList = []
+        this.records = []
       } else {
         this.category3Id = categoryId
-        this.spuList = []
+        this.records = []
         // 获取属性列表
         this.getSpuList()
       }
     },
     // 获取属性
-    async getSpuList() {
-      // try {
-      //   const res = await this.$API.attr.reqAttrList(
-      //     this.category1Id,
-      //     this.category2Id,
-      //     this.category3Id
-      //   )
-      //   this.attrList = res.data
-      // } catch (err) {
-      //   return
-      // }
+    async getSpuList(page = 1) {
+      this.pageNum = page
+      try {
+        const res = await this.$API.spu.reqSpuList(
+          this.pageNum,
+          this.pageSize,
+          this.category3Id
+        )
+        this.records = res.data.records
+        this.total = res.data.total
+      } catch (err) {
+        return
+      }
+    },
+    // 改变当前页item数量的回调
+    handleSizeChange(limit) {
+      this.pageSize = limit
+      this.getSpuList()
+    },
+    // 自定义索引
+    indexMethod(index) {
+      return (this.pageNum - 1) * this.pageSize + 1 + index
     }
   }
 }
