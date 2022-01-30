@@ -4,8 +4,13 @@
       <CategorySelect :show="!show" @getCategoryId="getCategoryId"></CategorySelect>
     </el-card>
     <el-card>
-      <div>
-        <el-button type="primary" icon="el-icon-plus">添加SPU</el-button>
+      <div v-show="scene === 0">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          :disabled="!category3Id"
+          @click="addSpu"
+        >添加SPU</el-button>
         <!-- 表格 -->
         <el-table style="width: 100%" border :data="records">
           <el-table-column
@@ -17,7 +22,7 @@
           ></el-table-column>
           <el-table-column prop="spuName" label="SPU名称" width="width"> </el-table-column>
           <el-table-column prop="description" label="SPU描述" width="width"> </el-table-column>
-          <el-table-column prop="prop" label="操作" width="width">
+          <el-table-column v-slot="{ row }" prop="prop" label="操作" width="width">
             <hint-button
               type="success"
               icon="el-icon-plus"
@@ -29,6 +34,7 @@
               icon="el-icon-edit"
               size="mini"
               title="修改spu"
+              @click="updateSpu(row)"
             ></hint-button>
             <hint-button
               type="info"
@@ -56,13 +62,22 @@
         >
         </el-pagination>
       </div>
+      <SpuForm v-show="scene === 1" ref="spu" @changeScene="changeScene"></SpuForm>
+      <SkuForm v-show="scene === 2"></SkuForm>
     </el-card>
   </div>
 </template>
 
 <script>
+import SpuForm from './SpuForm'
+import SkuForm from './SkuForm'
+
 export default {
   name: 'Spu',
+  components: {
+    SpuForm,
+    SkuForm
+  },
   data() {
     return {
       show: true,
@@ -72,7 +87,8 @@ export default {
       pageNum: 0,
       pageSize: 3,
       total: 0,
-      records: []
+      records: [],
+      scene: 1
     }
   },
   methods: {
@@ -117,6 +133,19 @@ export default {
     // 自定义索引
     indexMethod(index) {
       return (this.pageNum - 1) * this.pageSize + 1 + index
+    },
+    // 添加spu按钮的回调
+    addSpu() {
+      this.scene = 1
+    },
+    // 修改spu按钮的回调
+    updateSpu(row) {
+      this.scene = 1
+      this.$refs.spu.initSpuData(row)
+    },
+    // 修改scene的自定义事件
+    changeScene(scene) {
+      this.scene = scene
     }
   }
 }
