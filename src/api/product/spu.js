@@ -9,3 +9,11 @@ export const reqTradeMarkList = () => request('/admin/product/baseTrademark/getT
 export const reqSpuImageList = (spuId) => request(`/admin/product/spuImageList/${spuId}`)
 
 export const reqBaseSaleAttrList = () => request('/admin/product/baseSaleAttrList')
+
+export const reqAddOrUpdateSpu = (spuInfo) => {
+  if (spuInfo.id) {
+    return request({ url: '/admin/product/updateSpuInfo', data: spuInfo, method: 'post' })
+  } else {
+    return request({ url: '/admin/product/saveSpuInfo', data: spuInfo, method: 'post' })
+  }
+}

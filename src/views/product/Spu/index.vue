@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card style="margin: 20px 0px">
-      <CategorySelect :show="!show" @getCategoryId="getCategoryId"></CategorySelect>
+      <CategorySelect :show="scene !== 0" @getCategoryId="getCategoryId"></CategorySelect>
     </el-card>
     <el-card>
       <div v-show="scene === 0">
@@ -80,7 +80,6 @@ export default {
   },
   data() {
     return {
-      show: true,
       category1Id: '',
       category2Id: '',
       category3Id: '',
@@ -88,7 +87,7 @@ export default {
       pageSize: 3,
       total: 0,
       records: [],
-      scene: 1
+      scene: 0
     }
   },
   methods: {
@@ -146,6 +145,7 @@ export default {
     // 修改scene的自定义事件
     changeScene(scene) {
       this.scene = scene
+      this.getSpuList(this.pageNum)
     }
   }
 }
