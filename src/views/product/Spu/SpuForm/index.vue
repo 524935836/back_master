@@ -32,6 +32,7 @@
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
           :file-list="spuImageList"
+          :on-success="handleSuccess"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
@@ -65,6 +66,7 @@
           <el-table-column label="属性名" width="width" prop="saleAttrName"></el-table-column>
           <el-table-column v-slot="{ row }" label="属性值名称列表" width="width">
             <!-- @close="handleClose(tag)" -->
+            <!-- tag标签 -->
             <el-tag
               v-for="tag in row.spuSaleAttrValueList"
               :key="tag.id"
@@ -109,7 +111,7 @@ export default {
       spuInfo: {
         category3Id: 0,
         description: '',
-        tmId: 0,
+        tmId: '',
         spuName: '',
         spuImageList: [
           // {
@@ -158,12 +160,18 @@ export default {
     }
   },
   methods: {
+    // 删除图片的回调
     handleRemove(file, fileList) {
-      console.log(file, fileList)
+      this.spuImageList = fileList
     },
+    // 图片预览的回调
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
+    },
+    // 添加图片的回调
+    handleSuccess(response, file, fileList) {
+      this.spuImageList = fileList
     },
     // 初始化数据
     async initSpuData(row) {
