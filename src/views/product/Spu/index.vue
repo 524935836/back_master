@@ -42,6 +42,7 @@
               icon="el-icon-info"
               size="mini"
               title="查看当前spu全部sku列表"
+              @click="showSkuList(row)"
             ></hint-button>
             <el-popconfirm title="这是一段内容确定删除吗？" @onConfirm="deleteSpu(row)">
               <hint-button
@@ -68,6 +69,17 @@
       </div>
       <SpuForm v-show="scene === 1" ref="spu" @changeScene="changeScene"></SpuForm>
       <SkuForm v-show="scene === 2" ref="sku" @changeScene="changeScene"></SkuForm>
+      <!-- 对话框 -->
+      <el-dialog :title="spu.spuName" :visible.sync="dialogTableVisible" :before-close="closeDialog">
+        <el-table v-loading="loading" :data="skuList" style="width: 100%" border>
+          <el-table-column prop="skuName" label="名称" width="width"> </el-table-column>
+          <el-table-column prop="price" label="价格" width="width"> </el-table-column>
+          <el-table-column prop="weight" label="重量" width="width"> </el-table-column>
+          <el-table-column v-slot="{ row }" label="默认图片" width="width">
+            <img :src="row.skuDefaultImg" alt="" style="width: 100px; height: 100px" />
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -91,7 +103,11 @@ export default {
       pageSize: 3,
       total: 0,
       records: [],
-      scene: 2
+      scene: 0,
+      dialogTableVisible: false,
+      spu: {},
+      skuList: [],
+      loading: true
     }
   },
   methods: {
@@ -170,6 +186,24 @@ export default {
     addSku(row) {
       this.scene = 2
       this.$refs.sku.getData(this.category1Id, this.category2Id, row)
+    },
+    // 展示sku列表
+    async showSkuList(spu) {
+      this.spu = spu
+      this.dialogTableVisible = true
+      try {
+        const res = await this.$API.spu.reqSkuList(spu.id)
+        this.skuList = res.data
+        this.loading = false
+      } catch (err) {
+        return
+      }
+    },
+    // 关闭对话框前的回调
+    closeDialog(done) {
+      this.loading = true
+      this.skuList = []
+      done()
     }
   }
 }

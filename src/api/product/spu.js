@@ -26,3 +26,5 @@ export const reqSpuSaleAttrList = (spuId) => request(`/admin/product/spuSaleAttr
 export const reqAttrInfoList = (category1Id, category2Id, category3Id) => request(`/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`)
 
 export const reqSaveSkuInfo = (skuInfo) => request({ url: '/admin/product/saveSkuInfo', method: 'post', data: skuInfo })
+
+export const reqSkuList = (spuId) => request({ url: `/admin/product/findBySpuId/${spuId}` })
