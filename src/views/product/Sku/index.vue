@@ -16,11 +16,28 @@
       </el-table-column>
       <el-table-column prop="weight" label="重量" width="80"></el-table-column>
       <el-table-column prop="price" label="价格" width="80"></el-table-column>
-      <el-table-column prop="prop" label="操作" width="width">
-        <el-button type="success" icon="el-icon-bottom" size="mini"></el-button>
-        <el-button type="success" icon="el-icon-top" size="mini"></el-button>
-        <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
-        <el-button type="info" icon="el-icon-info" size="mini"></el-button>
+      <el-table-column v-slot="{ row }" prop="prop" label="操作" width="width">
+        <el-button
+          v-if="row.isSale"
+          type="success"
+          icon="el-icon-bottom"
+          size="mini"
+          @click="cancel(row)"
+        ></el-button>
+        <el-button
+          v-else
+          type="success"
+          icon="el-icon-top"
+          size="mini"
+          @click="sale(row)"
+        ></el-button>
+        <el-button type="primary" icon="el-icon-edit" size="mini" @click="edit"></el-button>
+        <el-button
+          type="info"
+          icon="el-icon-info"
+          size="mini"
+          @click="showSkuInfo(row)"
+        ></el-button>
         <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
       </el-table-column>
     </el-table>
@@ -38,6 +55,45 @@
       @current-change="getSkuList"
     >
     </el-pagination>
+    <!-- 抽屉 -->
+    <el-drawer :visible.sync="drawer" size="50%" :show-close="false">
+      <el-row>
+        <el-col :span="5">名称</el-col>
+        <el-col :span="16">{{ skuInfo.skuName }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">描述</el-col>
+        <el-col :span="16">{{ skuInfo.skuDesc }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">价格</el-col>
+        <el-col :span="16">{{ skuInfo.price }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">平台属性</el-col>
+        <el-col :span="16">
+          <el-tag
+            v-for="attValue in skuInfo.skuAttrValueList"
+            :key="attValue.id"
+            type="success"
+            style="margin-right: 10px"
+          >
+            {{ attValue.attrId }}-{{ attValue.valueId }}
+          </el-tag>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">商品图片</el-col>
+        <el-col :span="16">
+          <!-- 走马灯 -->
+          <el-carousel trigger="click" height="500px" :autoplay="false">
+            <el-carousel-item v-for="item in skuInfo.skuImageList" :key="item.id">
+              <img :src="item.imgUrl" alt="" style="width: 100%; height: 100%" />
+            </el-carousel-item>
+          </el-carousel>
+        </el-col>
+      </el-row>
+    </el-drawer>
   </div>
 </template>
 
@@ -49,7 +105,9 @@ export default {
       pageNum: 1,
       pageSize: 10,
       totalCount: 50,
-      records: []
+      records: [],
+      drawer: false,
+      skuInfo: {}
     }
   },
   mounted() {
@@ -75,9 +133,80 @@ export default {
     // 自定义索引
     indexMethod(index) {
       return (this.pageNum - 1) * this.pageSize + 1 + index
+    },
+    // 上架
+    async sale(row) {
+      try {
+        await this.$API.sku.reqSale(row.id)
+        // eslint-disable-next-line
+        row.isSale = 1
+        this.$message.success('上架成功')
+      } catch (err) {
+        return
+      }
+    },
+    // 下架
+    async cancel(row) {
+      try {
+        await this.$API.sku.reqCancel(row.id)
+        // eslint-disable-next-line
+        row.isSale = 0
+        this.$message.success('下架成功')
+      } catch (err) {
+        return
+      }
+    },
+    // 修改按钮的回调
+    edit() {
+      this.$message('正在开发中')
+    },
+    // 展示sku详情的回调
+    async showSkuInfo(row) {
+      try {
+        const res = await this.$API.sku.reqSkuInfo(row.id)
+        this.skuInfo = res.data
+        this.drawer = true
+      } catch (err) {
+        return
+      }
     }
   }
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.el-col.el-col-5 {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.el-col {
+  margin: 10px;
+}
+</style>
+
+<style>
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+
+.el-carousel__button {
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+}
+</style>
