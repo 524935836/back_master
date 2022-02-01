@@ -28,6 +28,7 @@
               icon="el-icon-plus"
               size="mini"
               title="添加sku"
+              @click="addSku(row)"
             ></hint-button>
             <hint-button
               type="warning"
@@ -90,7 +91,7 @@ export default {
       pageSize: 3,
       total: 0,
       records: [],
-      scene: 0
+      scene: 2
     }
   },
   methods: {
@@ -164,6 +165,10 @@ export default {
       } catch (err) {
         return
       }
+    },
+    // 添加sku
+    addSku(row) {
+      this.scene = 2
     }
   }
 }
