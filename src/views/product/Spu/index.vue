@@ -71,6 +71,7 @@
       <SkuForm v-show="scene === 2" ref="sku" @changeScene="changeScene"></SkuForm>
       <!-- 对话框 -->
       <el-dialog :title="spu.spuName" :visible.sync="dialogTableVisible" :before-close="closeDialog">
+        <!-- 表格 -->
         <el-table v-loading="loading" :data="skuList" style="width: 100%" border>
           <el-table-column prop="skuName" label="名称" width="width"> </el-table-column>
           <el-table-column prop="price" label="价格" width="width"> </el-table-column>
