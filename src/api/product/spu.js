@@ -17,3 +17,5 @@ export const reqAddOrUpdateSpu = (spuInfo) => {
     return request({ url: '/admin/product/saveSpuInfo', data: spuInfo, method: 'post' })
   }
 }
+
+export const reqDeleteSpu = (spuId) => request({ url: `/admin/product/deleteSpu/${spuId}`, method: 'delete' })

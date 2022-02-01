@@ -42,12 +42,15 @@
               size="mini"
               title="查看当前spu全部sku列表"
             ></hint-button>
-            <hint-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-              title="删除spu"
-            ></hint-button>
+            <el-popconfirm title="这是一段内容确定删除吗？" @onConfirm="deleteSpu(row)">
+              <hint-button
+                slot="reference"
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                title="删除spu"
+              ></hint-button>
+            </el-popconfirm>
           </el-table-column>
         </el-table>
         <el-pagination
@@ -150,6 +153,16 @@ export default {
         this.getSpuList(this.pageNum)
       } else if (flag === '添加') {
         this.getSpuList()
+      }
+    },
+    // 删除spu
+    async deleteSpu(row) {
+      try {
+        await this.$API.spu.reqDeleteSpu(row.id)
+        this.getSpuList(this.records.length > 1 ? this.pageNum : this.pageNum - 1)
+        this.$message.success('删除成功')
+      } catch (err) {
+        return
       }
     }
   }
