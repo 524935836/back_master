@@ -19,3 +19,8 @@ export const reqAddOrUpdateSpu = (spuInfo) => {
 }
 
 export const reqDeleteSpu = (spuId) => request({ url: `/admin/product/deleteSpu/${spuId}`, method: 'delete' })
+
+// 添加sku
+export const reqSpuSaleAttrList = (spuId) => request(`/admin/product/spuSaleAttrList/${spuId}`)
+
+export const reqAttrInfoList = (category1Id, category2Id, category3Id) => request(`/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`)

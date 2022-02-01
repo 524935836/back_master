@@ -267,12 +267,16 @@ export default {
     // 点击添加Spu按钮的回调
     async addSpuData(category3Id) {
       this.spuInfo.category3Id = category3Id
-      // 获取品牌列表
-      const tradeMarkRes = await this.$API.spu.reqTradeMarkList()
-      this.tradeMarkList = tradeMarkRes.data
-      // 获取销售属性
-      const saleAttrRes = await this.$API.spu.reqBaseSaleAttrList()
-      this.saleAttrList = saleAttrRes.data
+      try {
+        // 获取品牌列表
+        const tradeMarkRes = await this.$API.spu.reqTradeMarkList()
+        this.tradeMarkList = tradeMarkRes.data
+        // 获取销售属性
+        const saleAttrRes = await this.$API.spu.reqBaseSaleAttrList()
+        this.saleAttrList = saleAttrRes.data
+      } catch (err) {
+        return
+      }
     }
   }
 }
