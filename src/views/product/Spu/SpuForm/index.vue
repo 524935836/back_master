@@ -242,23 +242,9 @@ export default {
     },
     // 取消添加或修改
     cancelAddOrUpdate() {
-      this.$emit('changeScene', 0)
+      this.$emit('changeScene', { scene: 0, flag: '' })
       // 清空
-      this.dialogImageUrl = ''
-      this.dialogVisible = false
-      this.spuInfo = {
-        category3Id: 0,
-        description: '',
-        tmId: '',
-        spuName: '',
-        spuImageList: [],
-
-        spuSaleAttrList: []
-      }
-      this.tradeMarkList = []
-      this.spuImageList = []
-      this.saleAttrList = []
-      this.saleAttrIdAndAttrName = ''
+      Object.assign(this._data, this.$options.data())
     },
     // 保存
     async addOrUpdateSpu() {
@@ -270,11 +256,23 @@ export default {
       })
       try {
         await this.$API.spu.reqAddOrUpdateSpu(this.spuInfo)
-        this.$emit('changeScene', 0)
+        this.$emit('changeScene', { scene: 0, flag: this.spuInfo.id ? '修改' : '添加' })
         this.$message.success('保存成功')
+        // 清空
+        Object.assign(this._data, this.$options.data())
       } catch (err) {
         return err
       }
+    },
+    // 点击添加Spu按钮的回调
+    async addSpuData(category3Id) {
+      this.spuInfo.category3Id = category3Id
+      // 获取品牌列表
+      const tradeMarkRes = await this.$API.spu.reqTradeMarkList()
+      this.tradeMarkList = tradeMarkRes.data
+      // 获取销售属性
+      const saleAttrRes = await this.$API.spu.reqBaseSaleAttrList()
+      this.saleAttrList = saleAttrRes.data
     }
   }
 }

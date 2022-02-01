@@ -136,6 +136,7 @@ export default {
     // 添加spu按钮的回调
     addSpu() {
       this.scene = 1
+      this.$refs.spu.addSpuData(this.category3Id)
     },
     // 修改spu按钮的回调
     updateSpu(row) {
@@ -143,9 +144,13 @@ export default {
       this.$refs.spu.initSpuData(row)
     },
     // 修改scene的自定义事件
-    changeScene(scene) {
+    changeScene({ scene, flag }) {
       this.scene = scene
-      this.getSpuList(this.pageNum)
+      if (flag === '修改') {
+        this.getSpuList(this.pageNum)
+      } else if (flag === '添加') {
+        this.getSpuList()
+      }
     }
   }
 }
