@@ -259,10 +259,10 @@ export default {
         this.$emit('changeScene', { scene: 0, flag: this.spuInfo.id ? '修改' : '添加' })
         this.$message.success('保存成功')
         // 清空
-        Object.assign(this._data, this.$options.data())
       } catch (err) {
         return err
       }
+      Object.assign(this._data, this.$options.data())
     },
     // 点击添加Spu按钮的回调
     async addSpuData(category3Id) {

@@ -4,16 +4,16 @@
     <el-form label-width="80px">
       <el-form-item label="SPU名称">{{ spuInfo.spuName }}</el-form-item>
       <el-form-item label="SKU名称">
-        <el-input v-model="spuInfo.skuName" placeholder="SKU名称"></el-input>
+        <el-input v-model="skuInfo.skuName" placeholder="SKU名称"></el-input>
       </el-form-item>
       <el-form-item label="价格(元)">
-        <el-input v-model="spuInfo.price" placeholder="价格(元)"></el-input>
+        <el-input v-model="skuInfo.price" placeholder="价格(元)" type="number"></el-input>
       </el-form-item>
       <el-form-item label="重量(千克)">
-        <el-input v-model="spuInfo.weight" placeholder="重量(千克)"></el-input>
+        <el-input v-model="skuInfo.weight" placeholder="重量(千克)"></el-input>
       </el-form-item>
       <el-form-item label="规格描述">
-        <el-input v-model="spuInfo.skuDesc" type="textarea" rows="4"></el-input>
+        <el-input v-model="skuInfo.skuDesc" type="textarea" rows="4"></el-input>
       </el-form-item>
       <el-form-item label="平台属性">
         <!-- 行内表单 -->
@@ -80,7 +80,7 @@
         </el-table>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="save">保存</el-button>
         <el-button @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
@@ -173,6 +173,7 @@ export default {
     // 取消
     cancel() {
       this.$emit('changeScene', { scene: 0, flag: '' })
+      Object.assign(this._data, this.$options.data())
     },
     // 选项发生变化的回调
     handleSelect(imageList) {
@@ -185,6 +186,44 @@ export default {
       })
       row.isDefault = 1
       this.skuInfo.skuDefaultImg = row.imgUrl
+    },
+    // 保存
+    async save() {
+      const { skuInfo, attrInfoList, spuSaleAttrList, imageList } = this
+      // 整理平台属性
+      skuInfo.skuAttrValueList = attrInfoList.reduce((pre, item) => {
+        if (item.attrIdAndAttrValueId) {
+          const [attrId, valueId] = item.attrIdAndAttrValueId.split(':')
+          pre.push({ attrId, valueId })
+        }
+        return pre
+      }, [])
+      // 整理销售属性
+      skuInfo.skuSaleAttrValueList = spuSaleAttrList.reduce((pre, item) => {
+        if (item.saleAttrIdAndSaleAttrValueId) {
+          const [saleAttrId, saleAttrValueId] = item.saleAttrIdAndSaleAttrValueId.split(':')
+          pre.push({ saleAttrId, saleAttrValueId })
+        }
+        return pre
+      }, [])
+      // 整理图片
+      skuInfo.skuImageList = imageList.map((item) => {
+        return {
+          imgName: item.imgName,
+          imgUrl: item.imgUrl,
+          isDefault: item.isDefault,
+          spuImgId: item.id
+        }
+      })
+      // 添加sku
+      try {
+        await this.$API.spu.reqSaveSkuInfo(skuInfo)
+        this.$emit('changeScene', { scene: 0, flag: '' })
+        this.$message.success('保存成功')
+      } catch (err) {
+        return
+      }
+      Object.assign(this._data, this.$options.data())
     }
   }
 }
