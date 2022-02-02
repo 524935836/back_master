@@ -184,6 +184,13 @@ export default {
 .el-col {
   margin: 10px;
 }
+
+/deep/ .el-carousel__button {
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+}
 </style>
 
 <style>
@@ -201,12 +208,5 @@ export default {
 
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
-}
-
-.el-carousel__button {
-  width: 10px;
-  height: 10px;
-  background: red;
-  border-radius: 50%;
 }
 </style>
