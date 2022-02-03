@@ -3,6 +3,7 @@
     <el-row :gutter="10">
       <el-col :span="6">
         <Detail title="总销售额" count="¥ 126560">
+          <!-- 一 -->
           <template v-slot:charts>
             <div class="chartStyle">
               <span>周同比</span>
@@ -18,6 +19,7 @@
       </el-col>
       <el-col :span="6">
         <Detail title="访问量" count="88460">
+          <!-- 二 -->
           <template v-slot:charts>
             <LineChart></LineChart>
           </template>
@@ -28,6 +30,10 @@
       </el-col>
       <el-col :span="6">
         <Detail title="支付笔数" count="88460">
+          <!-- 三 -->
+          <template v-slot:charts>
+            <BarChart></BarChart>
+          </template>
           <template v-slot:footer>
             <span>转换率64%</span>
           </template>
@@ -35,6 +41,7 @@
       </el-col>
       <el-col :span="6">
         <Detail title="运营活动效果" count="78%">
+          <!-- 四 -->
           <template v-slot:footer>
             <div class="chartStyle">
               <span>周同比</span>
@@ -52,12 +59,14 @@
 <script>
 import Detail from './Detail'
 import LineChart from './LineChart'
+import BarChart from './BarChart'
 
 export default {
   name: 'Cart',
   components: {
     Detail,
-    LineChart
+    LineChart,
+    BarChart
   },
   data() {
     return {}

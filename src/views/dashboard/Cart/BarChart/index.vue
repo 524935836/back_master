@@ -6,7 +6,7 @@
 import * as echarts from 'echarts'
 
 export default {
-  name: 'LineChart',
+  name: 'BarChart',
   data() {
     return {
 
@@ -30,13 +30,9 @@ export default {
       },
       series: [
         {
-          type: 'line',
+          type: 'bar',
           data: [10, 7, 33, 12, 48, 9, 29, 10, 44],
           itemStyle: {
-            opacity: 0
-          },
-          smooth: true,
-          areaStyle: {
             color: {
               type: 'linear',
               x: 0,
@@ -44,9 +40,9 @@ export default {
               x2: 0,
               y2: 1,
               colorStops: [{
-                offset: 0, color: 'blue' // 0% 处的颜色
+                offset: 0, color: 'cyan' // 0% 处的颜色
               }, {
-                offset: 1, color: '#fff' // 100% 处的颜色
+                offset: 1, color: 'blue' // 100% 处的颜色
               }]
             }
           }
