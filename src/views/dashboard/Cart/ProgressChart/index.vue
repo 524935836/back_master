@@ -6,7 +6,7 @@
 import * as echarts from 'echarts'
 
 export default {
-  name: 'BarChart',
+  name: 'ProgressChart',
   data() {
     return {
 
@@ -17,9 +17,11 @@ export default {
     lineChart.setOption({
       xAxis: {
         show: false,
-        type: 'category'
+        min: 0,
+        max: 100
       },
       yAxis: {
+        type: 'category',
         show: false
       },
       grid: {
@@ -28,24 +30,23 @@ export default {
         right: 0,
         bottom: 0
       },
-      tooltip: {},
       series: [
         {
           type: 'bar',
-          data: [10, 7, 33, 12, 48, 9, 29, 10, 44],
+          data: [70],
+          barWidth: 10,
           itemStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'cyan' // 0% 处的颜色
-              }, {
-                offset: 1, color: 'blue' // 100% 处的颜色
-              }]
-            }
+            color: 'yellowgreen'
+          },
+          label: {
+            show: true,
+            formatter: '|',
+            position: 'right',
+            color: 'yellowgreen'
+          },
+          showBackground: true,
+          backgroundStyle: {
+            color: '#eee'
           }
         }
       ]

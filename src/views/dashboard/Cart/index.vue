@@ -42,6 +42,9 @@
       <el-col :span="6">
         <Detail title="运营活动效果" count="78%">
           <!-- 四 -->
+          <template v-slot:charts>
+            <ProgressChart></ProgressChart>
+          </template>
           <template v-slot:footer>
             <div class="chartStyle">
               <span>周同比</span>
@@ -60,13 +63,15 @@
 import Detail from './Detail'
 import LineChart from './LineChart'
 import BarChart from './BarChart'
+import ProgressChart from './ProgressChart'
 
 export default {
   name: 'Cart',
   components: {
     Detail,
     LineChart,
-    BarChart
+    BarChart,
+    ProgressChart
   },
   data() {
     return {}
