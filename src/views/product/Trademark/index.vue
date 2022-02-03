@@ -187,12 +187,12 @@ export default {
         type: 'warning'
       })
         .then(async() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
           try {
             await this.$API.tradeMark.reqDeleteTradeMark(row.id)
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
             this.getTradeMarkList(this.list.length > 1 ? this.pageNum : this.pageNum - 1)
           } catch (err) {
             return
