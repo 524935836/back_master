@@ -20,7 +20,7 @@ export default {
     Observe
   },
   mounted() {
-    this.getData()
+    // this.getData()
   },
   methods: {
     ...mapActions('home', ['getData'])

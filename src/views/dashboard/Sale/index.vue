@@ -139,7 +139,8 @@ export default {
           type: 'category',
           axisTick: {
             alignWithLabel: true
-          }
+          },
+          data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
         }
       ],
       yAxis: [
@@ -151,7 +152,8 @@ export default {
         {
           name: 'Direct',
           type: 'bar',
-          barWidth: '60%'
+          barWidth: '60%',
+          data: [100, 200, 100, 320, 230, 240, 50, 200, 52, 30, 110, 123]
         }
       ]
     })
