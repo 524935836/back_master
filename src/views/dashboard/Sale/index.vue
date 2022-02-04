@@ -83,6 +83,7 @@
 <script>
 import * as echarts from 'echarts'
 import dayjs from 'dayjs'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Sale',
@@ -94,8 +95,25 @@ export default {
     }
   },
   computed: {
+    ...mapState('home', ['list']),
     title() {
       return this.activeName === 'sale' ? '销售额' : '访问量'
+    }
+  },
+  watch: {
+    // 监听list
+    list() {
+      // 初始化数据
+      this.myChart.setOption({
+        xAxis: {
+          data: this.list.userFullYearAxis
+        },
+        series: [
+          {
+            data: this.list.userFullYear
+          }
+        ]
+      })
     }
   },
   mounted() {
@@ -119,20 +137,6 @@ export default {
       xAxis: [
         {
           type: 'category',
-          data: [
-            '1份',
-            '2份',
-            '3份',
-            '4份',
-            '5份',
-            '6份',
-            '7份',
-            '8份',
-            '9份',
-            '10份',
-            '11月份',
-            '12月份'
-          ],
           axisTick: {
             alignWithLabel: true
           }
@@ -147,8 +151,7 @@ export default {
         {
           name: 'Direct',
           type: 'bar',
-          barWidth: '60%',
-          data: [10, 52, 200, 334, 390, 330, 220, 110, 200, 300, 230, 500]
+          barWidth: '60%'
         }
       ]
     })
@@ -159,7 +162,17 @@ export default {
       this.myChart.setOption({
         title: {
           text: this.title + '趋势'
-        }
+        },
+        // 更新数据
+        xAxis: {
+          data:
+            this.title === '销售额' ? this.list.userFullYearAxis : this.list.orderFullYearAxis
+        },
+        series: [
+          {
+            data: this.title === '销售额' ? this.list.userFullYear : this.list.orderFullYear
+          }
+        ]
       })
     },
     setDay() {
