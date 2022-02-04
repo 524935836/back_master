@@ -41,6 +41,7 @@ export default {
 .card-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   color:#d9d9d9;
 }
 

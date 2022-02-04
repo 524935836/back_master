@@ -2,18 +2,21 @@
   <div>
     <Cart></Cart>
     <Sale></Sale>
+    <Observe></Observe>
   </div>
 </template>
 
 <script>
 import Cart from './Cart'
 import Sale from './Sale'
+import Observe from './Observe'
 
 export default {
   name: 'Dashboard',
   components: {
     Cart,
-    Sale
+    Sale,
+    Observe
   }
 }
 </script>
