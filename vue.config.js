@@ -91,6 +91,24 @@ module.exports = {
     config
       .when(process.env.NODE_ENV !== 'development',
         config => {
+          config.entry('app').clear().add('./src/main-prod.js')
+          config.set('externals', {
+            'element-ui': 'ElementUI',
+            echarts: 'echarts',
+            vue: 'Vue',
+            'vue-router': 'Router',
+            axios: 'axios',
+            nprogress: 'NProgress',
+            mockjs: {
+              commonjs: 'Mock'
+            },
+            vuex: 'Vuex'
+          })
+          config.plugin('html').tap(args => {
+            args[0].isProd = true
+            return args
+          })
+
           config
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
@@ -99,6 +117,7 @@ module.exports = {
               inline: /runtime\..*\.js$/
             }])
             .end()
+
           config
             .optimization.splitChunks({
               chunks: 'all',
@@ -125,6 +144,18 @@ module.exports = {
             })
           // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
           config.optimization.runtimeChunk('single')
+        }
+      )
+
+    config
+      .when(process.env.NODE_ENV === 'development',
+        config => {
+          // 更改入口
+          config.entry('app').clear().add('./src/main-dev.js')
+          config.plugin('html').tap(args => {
+            args[0].isProd = false
+            return args
+          })
         }
       )
   }
