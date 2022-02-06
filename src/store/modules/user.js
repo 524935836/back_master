@@ -1,12 +1,19 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { resetRouter, asyncRoutes, constantRoutes, anyRoutes } from '@/router'
+import router from '@/router'
+import cloneDeep from 'lodash/cloneDeep'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    routes: [],
+    roles: [],
+    buttons: [],
+    resAsyncRoutes: [],
+    resAllRoutes: []
   }
 }
 
@@ -19,12 +26,34 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  // 保存不同用户信息
+  SET_USERINFO: (state, userInfo) => {
+    state.name = userInfo.name
+    state.avatar = userInfo.avatar
+    state.routes = userInfo.routes
+    state.roles = userInfo.roles
+    state.buttons = userInfo.buttons
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  // 保存异步路由与合并全部路由
+  SET_RESASYNCROUTES: (state, resAsyncRoutes) => {
+    state.resAsyncRoutes = resAsyncRoutes
+    // 整合赋值路由
+    state.resAllRoutes = constantRoutes.concat(state.resAsyncRoutes, anyRoutes)
+    // 添加为新的路由
+    router.$addRoutes(state.resAllRoutes)
   }
+}
+
+// 过滤异步路由
+const computeAsyncRoutes = (asyncRoutes, routes) => {
+  return asyncRoutes.filter(item => {
+    if (routes.indexOf(item.name) !== -1) {
+      if (item.children) {
+        item.children = computeAsyncRoutes(item.children, routes)
+      }
+      return true
+    }
+  })
 }
 
 const actions = {
@@ -60,10 +89,8 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        commit('SET_USERINFO', data)
+        commit('SET_RESASYNCROUTES', computeAsyncRoutes(cloneDeep(asyncRoutes), state.routes))
         resolve(data)
       }).catch(error => {
         reject(error)

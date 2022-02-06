@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+// import store from '@/store'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -55,40 +56,10 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard' }
       }
     ]
-  },
-  // 商品管理
-  {
-    path: '/product',
-    component: Layout,
-    meta: { title: '商品管理', icon: 'el-icon-goods' },
-    redirect: '/product/trademark',
-    children: [
-      {
-        path: 'trademark',
-        name: 'Trademark',
-        component: () => import('@/views/product/Trademark'),
-        meta: { title: '品牌管理' }
-      },
-      {
-        path: 'attr',
-        name: 'Attr',
-        component: () => import('@/views/product/Attr'),
-        meta: { title: '平台属性管理' }
-      },
-      {
-        path: 'spu',
-        name: 'Spu',
-        component: () => import('@/views/product/Spu'),
-        meta: { title: 'Spu管理' }
-      },
-      {
-        path: 'sku',
-        name: 'Sku',
-        component: () => import('@/views/product/Sku'),
-        meta: { title: 'Sku管理' }
-      }
-    ]
-  },
+  }
+]
+// 异步路由
+export const asyncRoutes = [
   // 权限管理
   {
     name: 'Acl',
@@ -136,9 +107,64 @@ export const constantRoutes = [
       }
     ]
   },
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  // 商品管理
+  {
+    path: '/product',
+    component: Layout,
+    name: 'Product',
+    meta: { title: '商品管理', icon: 'el-icon-goods' },
+    redirect: '/product/trademark',
+    children: [
+      {
+        path: 'trademark',
+        name: 'Trademark',
+        component: () => import('@/views/product/Trademark'),
+        meta: { title: '品牌管理' }
+      },
+      {
+        path: 'attr',
+        name: 'Attr',
+        component: () => import('@/views/product/Attr'),
+        meta: { title: '平台属性管理' }
+      },
+      {
+        path: 'spu',
+        name: 'Spu',
+        component: () => import('@/views/product/Spu'),
+        meta: { title: 'Spu管理' }
+      },
+      {
+        path: 'sku',
+        name: 'Sku',
+        component: () => import('@/views/product/Sku'),
+        meta: { title: 'Sku管理' }
+      }
+    ]
+  },
+  // 测试管理
+  {
+    path: '/test',
+    component: Layout,
+    name: 'Test',
+    meta: { title: '测试管理', icon: 'el-icon-goods' },
+    children: [
+      {
+        path: 'test1',
+        name: 'Test1',
+        component: () => import('@/views/Test/Test1'),
+        meta: { title: '测试管理1' }
+      },
+      {
+        path: 'test2',
+        name: 'Test2',
+        component: () => import('@/views/Test/Test2'),
+        meta: { title: '测试管理2' }
+      }
+    ]
+  }
 ]
+// 任意路由   // 404 page must be placed at the end !!!
+export const anyRoutes = { path: '*', redirect: '/404', hidden: true }
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
@@ -153,5 +179,36 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
+
+router.$addRoutes = (params) => {
+  router.matcher = new Router({}).matcher
+  router.addRoutes(params)
+}
+
+// router.afterEach((to, from) => {
+//   // 添加规则前清空路由
+//   if (from.path === '/login') {
+//     console.log(111)
+//     router.matcher = new Router({}).matcher
+//     router.addRoutes(store.state.user.resAllRoutes)
+//   }
+// })
+
+// 动态路由刷新后消失解决办法
+// let load = 0
+// router.beforeEach(async(to, from, next) => {
+//   const res = store.state.user.resAllRoutes
+//   const token = store.state.user.token
+//   console.log(load === 0 && !res.length && to.path !== '/login' && token)
+//   if (load === 0 && !res.length && to.path !== '/login' && token) {
+//     load++
+//     await store.dispatch('user/getInfo')
+//     console.log(11)
+//     next({ path: to.path })
+//     return
+//   }
+//   console.log(333)
+//   next()
+// })
 
 export default router
