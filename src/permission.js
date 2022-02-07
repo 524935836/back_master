@@ -10,8 +10,8 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login'] // no redirect whitelist
 
-let load = 0
-const res = store.state.user.resAllRoutes
+// let load = 0
+// const res = store.state.user.resAllRoutes
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
@@ -36,12 +36,12 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info 动态路由刷新后消失解决办法 load为0且要添加的路由规则为空
           await store.dispatch('user/getInfo')
-          if (load === 0 && !res.length) {
-            load++
-            // state没值一直等待
-            next({ path: to.path })
-          }
-          next()
+          // if (load === 0 && !res.length) {
+          // load++
+          // state没值一直等待
+          next({ ...to })
+          // }
+          // next()
         } catch (error) {
           // token是否过期
           // remove token and go to login page to re-login
@@ -68,7 +68,7 @@ router.beforeEach(async(to, from, next) => {
 
 router.afterEach((to, from) => {
   // 退出登录后重置为0
-  load = 0
+  // load = 0
   // finish progress bar
   NProgress.done()
 })
